@@ -1,0 +1,7 @@
+# Shell scripts and systemd units run on Linux -- they must never get CRLF,
+# or the shebang breaks with "bad interpreter: ...^M" and unit parsing fails.
+*.sh            text eol=lf
+*.service       text eol=lf
+*.timer         text eol=lf
+*.py            text eol=lf
+.env.example    text eol=lf

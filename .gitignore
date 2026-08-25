@@ -1,0 +1,9 @@
+# Secrets -- never commit.
+.env
+
+# Mailcow-generated Apple mail profiles embed the mailbox password in
+# PLAINTEXT (<key>IncomingPassword</key>). Never commit one.
+*.mobileconfig
+
+__pycache__/
+*.pyc
