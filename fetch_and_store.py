@@ -4,9 +4,27 @@ import os
 import sys
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 
 import psycopg2
 from psycopg2.extras import execute_values
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover
+    print(
+        "python-dotenv is not installed -- run: pip install -r requirements.txt",
+        file=sys.stderr,
+    )
+    raise
+
+# Under systemd the variables arrive via EnvironmentFile=, so the environment is
+# already populated and there may be no .env next to this file at all. Run by hand
+# and nothing would load it, which used to fail with a bare "Missing required
+# environment variables" naming every one of them. override=False so a value
+# already exported (systemd, or `set -a; source .env`) always wins over the file.
+# Anchored to this file's own directory so the run works from any cwd.
+load_dotenv(Path(__file__).resolve().parent / ".env", override=False)
 
 MAILCOW_HOST = os.environ.get("MAILCOW_HOST")
 MAILCOW_PORT = int(os.environ.get("MAILCOW_PORT", "993"))

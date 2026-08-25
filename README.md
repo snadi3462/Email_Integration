@@ -18,7 +18,7 @@ Postgres, on a 2-hourly schedule.
 ## Requirements
 
 - Python 3
-- `psycopg2-binary` (see `requirements.txt`)
+- `psycopg2-binary` and `python-dotenv` (see `requirements.txt`)
 - An IMAP app password for the mailbox (Mailcow -> mailbox -> App Passwords)
 - A Postgres role with CREATE + INSERT on the target database
 
@@ -41,6 +41,12 @@ All connection details come from environment variables.
 | `DB_PASSWORD` | Postgres password |
 
 Copy `.env.example` to `.env` and fill it in. `.env` is gitignored.
+
+The script loads `.env` itself (from its own directory, so any working directory
+works), which is what makes a manual run possible at all -- under systemd the
+same values arrive via `EnvironmentFile=` instead. Anything already exported in
+the environment wins over the file, so `set -a; source .env; set +a` still
+behaves as you'd expect.
 
 **Quote any value containing `#`.** systemd reads `.env` via `EnvironmentFile=`,
 and an unquoted `#` can truncate the value, producing a confusing auth failure
@@ -81,6 +87,10 @@ Then set `DB_HOST=127.0.0.1` and `DB_PORT=5433` in `.env` and run:
 pip install -r requirements.txt
 python fetch_and_store.py
 ```
+
+If this exits with `Missing required environment variables:` listing everything,
+`.env` isn't being found -- confirm it sits next to `fetch_and_store.py` and that
+`python-dotenv` actually installed.
 
 ## Deployment
 
