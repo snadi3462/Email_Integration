@@ -106,6 +106,21 @@ That creates a venv, installs `deploy/askcruz-email.service` and
 `deploy/askcruz-email.timer`, and enables the timer
 (`OnCalendar=00/2:00:00`, `Persistent=true` so a reboot doesn't skip a window).
 
+### Without root
+
+`install.sh` needs sudo to write `/etc/systemd/system/`. If you can log into the
+box but aren't in the sudoers file, `deploy/install-cron.sh` installs the same
+2-hourly schedule on your own user crontab instead:
+
+```bash
+bash deploy/install-cron.sh
+```
+
+It is a stopgap, not the real deployment: the job runs as you rather than as
+`deploy`, a window missed while the box is down is skipped rather than caught up,
+and output goes to `harvest.log` instead of journald. Prefer the systemd unit
+once someone with root can install it.
+
 Check it:
 
 ```bash
